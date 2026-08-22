@@ -1,0 +1,71 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client"
+}
+
+model User {
+  id           String       @id // Matches Supabase Auth user.id
+  email        String       @unique
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  challenges   Challenge[]
+  dailyEntries DailyEntry[]
+
+  @@map("users")
+}
+
+enum ChallengeStatus {
+  ACTIVE
+  COMPLETED
+  ABANDONED
+}
+
+model Challenge {
+  id          String          @id @default(cuid())
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startDate   DateTime        @default(now())
+  endDate     DateTime?
+  status      ChallengeStatus @default(ACTIVE)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  entries     DailyEntry[]
+
+  @@index([userId, status])
+  @@map("challenges")
+}
+
+model DailyEntry {
+  id          String             @id @default(cuid())
+  challengeId String
+  challenge   Challenge          @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dayNumber   Int                // 1 to 10
+  completedAt DateTime?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  responses   QuestionResponse[]
+
+  @@unique([challengeId, dayNumber])
+  @@index([userId, dayNumber])
+  @@map("daily_entries")
+}
+
+model QuestionResponse {
+  id           String     @id @default(cuid())
+  dailyEntryId String
+  dailyEntry   DailyEntry @relation(fields: [dailyEntryId], references: [id], onDelete: Cascade)
+  promptIndex  Int        // 1 through 7
+  promptText   String
+  answerText   String     @default("")
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([dailyEntryId, promptIndex])
+  @@map("question_responses")
+}
