@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Inter, Merriweather, Caveat } from "next/font/google";
+import { Inter, Playfair_Display, Caveat } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const merriweather = Merriweather({ weight: ["300", "400", "700"], subsets: ["latin"], variable: "--font-merriweather" });
+const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
 const caveat = Caveat({ weight: ["400", "700"], subsets: ["latin"], variable: "--font-caveat" });
 
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${merriweather.variable} ${caveat.variable} antialiased selection:bg-primary/20 selection:text-primary`}>
+    <html lang="en" className={`${inter.variable} ${playfair.variable} ${caveat.variable} antialiased selection:bg-primary/20 selection:text-primary`}>
       <body className="min-h-screen bg-background text-on-background">
         {children}
       </body>
