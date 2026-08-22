@@ -170,11 +170,21 @@ export function SignInModal({
 
 
 
-            {error && (
-              <div className="p-3 bg-error/10 text-error rounded text-[13px] text-center">
-                {error}
-              </div>
-            )}
+            {/* Reserved Space to Prevent Layout Shift */}
+            <div className="h-10 w-full flex items-center justify-center -my-2">
+              <AnimatePresence mode="wait">
+                {error && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="w-full px-3 py-2 bg-error/10 border border-error/20 text-error rounded-md text-[13px] text-center font-medium"
+                  >
+                    {error}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             <form onSubmit={handleEmailAuth} className="flex flex-col gap-5">
               <div className="flex flex-col gap-2">
