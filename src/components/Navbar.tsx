@@ -29,8 +29,7 @@ export function Navbar() {
           <span className="font-headline-sm text-[20px] md:text-[22px] font-bold text-primary group-hover:text-primary-container transition-colors">
             7x7
           </span>
-          <span className="font-body-md text-on-surface-variant hidden sm:inline-block font-medium">
-            Journal
+          <span className="font-body-md text-on-surface-variant hidden sm:inline-block font-medium">  
           </span>
         </Link>
 

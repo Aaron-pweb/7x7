@@ -30,12 +30,7 @@ export function Footer() {
         </div>
 
       </div>
-      
-      <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-surface-variant text-center">
-        <p className="text-[12px] text-secondary-fixed-dim font-label-caps uppercase tracking-widest">
-          © {new Date().getFullYear()} 7x7 Journal. All rights reserved.
-        </p>
-      </div>
+
     </footer>
   );
 }
