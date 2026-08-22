@@ -17,6 +17,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "7x7 Journal | A Minimalist Approach to Self-Reflection",
   description: "Ten days of disciplined, identical questions yielding transformative insights.",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
