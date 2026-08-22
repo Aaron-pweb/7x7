@@ -1,26 +1,44 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-primary: #A7321C;
+  --color-primary-container: #822212;
+  --color-on-primary: #FFFFFF;
+  --color-on-primary-container: #FFD4CD;
+  
+  --color-secondary: #775752;
+  --color-secondary-container: #FFDAD5;
+  --color-on-secondary: #FFFFFF;
+  --color-on-secondary-container: #2C1512;
+  --color-secondary-fixed-dim: #E7BDB7;
+
+  --color-background: #FFFBFA;
+  --color-on-background: #201A19;
+  
+  --color-surface: #FFFBFA;
+  --color-on-surface: #201A19;
+  --color-surface-variant: #F5DDDA;
+  --color-on-surface-variant: #534341;
+  
+  --color-outline: #857370;
+  --color-error: #BA1A1A;
+  
+  --font-headline-md: "Merriweather", serif;
+  --font-headline-sm: "Merriweather", serif;
+  --font-body-lg: "Inter", sans-serif;
+  --font-body-md: "Inter", sans-serif;
+  --font-label-caps: "Inter", sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Glassmorphism Utilities */
+@utility glass-panel {
+  @apply bg-surface/60 backdrop-blur-md border border-surface-variant/50 shadow-sm;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@utility glass-modal {
+  @apply bg-surface/80 backdrop-blur-xl border border-surface-variant/50 shadow-2xl;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-background text-on-background font-body-md;
 }
