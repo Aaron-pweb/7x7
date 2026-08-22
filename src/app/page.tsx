@@ -12,16 +12,18 @@ export default function LandingPage() {
       <ShaderBackground />
       <Navbar />
       
-      <main className="flex-grow flex flex-col items-center justify-center relative z-10 px-6 py-10 md:py-20">
+      <main className="flex-grow flex flex-col items-center justify-center relative z-10 px-6 pt-[120px] md:pt-[160px] pb-10 md:pb-20">
         <section className="max-w-4xl mx-auto text-center flex flex-col items-center gap-8 md:gap-10">
           
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-            className="font-headline-md text-[40px] md:text-[64px] text-on-surface leading-[1.1] font-bold"
+            className="font-headline-md text-[40px] md:text-[64px] text-on-surface leading-[1.2] font-bold"
           >
-            Same questions.<br className="hidden md:block"/> Every day.<br className="hidden md:block"/> <span className="text-primary">Different answers.</span>
+            Same <span className="font-sans font-black tracking-tighter bg-on-surface text-primary px-4 py-1 rounded-xl shadow-lg">questions</span>.<br className="hidden md:block"/> 
+            Every day.<br className="hidden md:block"/> 
+            Different <span className="font-sans font-black tracking-tighter bg-primary text-on-surface px-4 py-1 rounded-xl shadow-lg">answers</span>.
           </motion.h1>
           
           <motion.p 
@@ -41,9 +43,6 @@ export default function LandingPage() {
             className="pt-6 md:pt-8"
           >
             <SignInModal triggerLabel="Begin Today" defaultIsSignUp={true} variant="primary" />
-            <p className="text-[11px] md:text-[12px] font-semibold text-secondary-fixed-dim mt-6 uppercase tracking-widest">
-              No credit card required. Free forever.
-            </p>
           </motion.div>
           
         </section>
