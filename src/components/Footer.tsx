@@ -9,7 +9,7 @@ export function Footer() {
         {/* Brand */}
         <div className="flex flex-col gap-4 items-center md:items-start">
           <Link href="/" className="inline-block transition-transform duration-200 hover:scale-[1.02]">
-            <Logo className="h-8 w-auto" />
+            <Logo className="h-10 md:h-12 w-auto" />
           </Link>
           <p className="text-[14px] text-secondary max-w-xs mx-auto md:mx-0">
             A minimalist approach to self-reflection. Ten days of disciplined, identical questions yielding transformative insights.

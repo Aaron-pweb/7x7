@@ -100,9 +100,9 @@ export function SignInModal({
   };
 
   // Determine button styles based on variant
-  let buttonClasses = "";
+  let buttonClasses = "transition-all duration-300 font-medium ";
   if (variant === "primary") {
-    buttonClasses = "group relative px-6 py-2.5 md:px-8 md:py-3 bg-transparent border border-primary text-primary text-[16px] md:text-[18px] overflow-hidden transition-all duration-300 hover:bg-primary hover:text-on-primary rounded";
+    buttonClasses += "px-6 py-2.5 md:px-8 md:py-3 bg-primary text-on-primary text-[16px] md:text-[18px] rounded shadow-lg hover:bg-primary/90 hover:shadow-[0_8px_30px_rgba(167,50,28,0.3)]";
   } else if (variant === "outline") {
     buttonClasses = "px-4 py-2 border border-surface-variant text-on-surface hover:bg-surface-variant transition-colors rounded text-[14px]";
   } else {

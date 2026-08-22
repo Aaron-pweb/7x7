@@ -1,14 +1,30 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display, Caveat } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
+const playfair = Playfair_Display({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-playfair" });
 const caveat = Caveat({ weight: ["400", "700"], subsets: ["latin"], variable: "--font-caveat" });
+
+export const viewport: Viewport = {
+  themeColor: "#A7321C",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: "7x7 Journal | A Minimalist Approach to Self-Reflection",
   description: "Ten days of disciplined, identical questions yielding transformative insights.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "7x7 Journal",
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 export default function RootLayout({

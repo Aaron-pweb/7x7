@@ -27,7 +27,7 @@ export function Navbar() {
       >
         {/* Logo */}
         <Link href="/" className="flex items-center group transition-transform duration-200 hover:scale-[1.02]">
-          <Logo className="h-7 md:h-8 w-auto" />
+          <Logo className="h-9 md:h-11 w-auto" />
         </Link>
 
         {/* Desktop Links - Hidden on Mobile */}

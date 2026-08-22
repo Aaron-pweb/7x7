@@ -23,7 +23,7 @@ export default function LandingPage() {
           >
             Same <span className="font-sans font-black tracking-tighter bg-on-surface text-primary px-4 py-1 rounded-xl shadow-lg">questions</span><br className="hidden md:block"/> 
             Every day<br className="hidden md:block"/> 
-            Different <span className="font-handwriting font-bold tracking-wide text-[28px] md:text-[44px] leading-[0.5] align-baseline bg-primary text-on-surface px-4 py-1 rounded-xl shadow-lg">answers</span>
+            Different <span className="font-handwriting font-bold tracking-wide text-[28px] md:text-[44px] leading-[0.5] align-baseline bg-primary text-on-surface px-4 py-1 rounded-xl shadow-lg">answers.</span>
           </motion.h1>
           
           <motion.p 
