@@ -168,21 +168,7 @@ export function SignInModal({
               </p>
             </div>
 
-            {/* Auth Tabs */}
-            <div className="flex p-1 bg-surface-variant/50 rounded-lg">
-              <button 
-                onClick={() => setIsSignUp(false)}
-                className={`flex-1 py-2 text-[14px] font-medium rounded-md transition-all ${!isSignUp ? 'bg-surface shadow-sm text-primary' : 'text-on-surface-variant hover:text-on-surface'}`}
-              >
-                Log In
-              </button>
-              <button 
-                onClick={() => setIsSignUp(true)}
-                className={`flex-1 py-2 text-[14px] font-medium rounded-md transition-all ${isSignUp ? 'bg-surface shadow-sm text-primary' : 'text-on-surface-variant hover:text-on-surface'}`}
-              >
-                Sign Up
-              </button>
-            </div>
+
 
             {error && (
               <div className="p-3 bg-error/10 text-error rounded text-[13px] text-center">
@@ -223,7 +209,7 @@ export function SignInModal({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary text-on-primary py-3.5 mt-2 text-[16px] font-medium hover:bg-primary-container transition-colors duration-300 rounded disabled:opacity-50 relative overflow-hidden shadow-sm"
+                className="w-full bg-primary text-on-primary py-3.5 mt-2 text-[16px] font-medium hover:bg-primary/90 transition-colors duration-300 rounded disabled:opacity-50 relative overflow-hidden shadow-sm"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -259,6 +245,25 @@ export function SignInModal({
               </svg>
               Continue with Google
             </button>
+            
+            <div className="mt-2 text-center text-[13px] md:text-[14px] text-on-surface-variant font-body-md">
+              {isSignUp ? (
+                <>
+                  Already have an account?{" "}
+                  <button onClick={() => setIsSignUp(false)} className="text-primary font-semibold hover:underline underline-offset-4">
+                    Log in
+                  </button>
+                </>
+              ) : (
+                <>
+                  Don't have an account?{" "}
+                  <button onClick={() => setIsSignUp(true)} className="text-primary font-semibold hover:underline underline-offset-4">
+                    Sign up
+                  </button>
+                </>
+              )}
+            </div>
+            
             
           </motion.div>
         </motion.div>
