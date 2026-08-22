@@ -36,14 +36,12 @@ export function Navbar() {
 
         {/* Desktop Links - Hidden on Mobile */}
         <nav className="hidden md:flex items-center gap-8 font-body-md text-[14px]">
-          <Link href="#how-it-works" className="text-secondary hover:text-primary transition-colors">
-            How it Works
-          </Link>
         </nav>
 
         {/* Auth Actions */}
         <div className="flex items-center gap-3 md:gap-4">
-          <SignInModal />
+          <SignInModal triggerLabel="Log In" defaultIsSignUp={false} variant="ghost" />
+          <SignInModal triggerLabel="Sign Up" defaultIsSignUp={true} variant="outline" />
         </div>
       </div>
     </header>
