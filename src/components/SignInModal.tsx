@@ -137,7 +137,7 @@ export function SignInModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 backdrop-blur-xl bg-surface/80"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 backdrop-blur-md bg-[#120F0F]/40"
           onClick={() => setIsOpen(false)}
         >
           <motion.div
@@ -145,7 +145,7 @@ export function SignInModal({
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 20, opacity: 0, scale: 0.95 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className="w-full max-w-md glass-modal p-8 md:p-10 relative overflow-hidden flex flex-col gap-6 rounded-xl shadow-2xl"
+            className="w-full max-w-md bg-surface/95 backdrop-blur-3xl border border-primary/10 p-8 md:p-10 relative overflow-hidden flex flex-col gap-6 rounded-2xl shadow-[0_20px_60px_-15px_rgba(167,50,28,0.15)]"
             onClick={(e) => e.stopPropagation()}
           >
             

@@ -16,20 +16,20 @@ export function Navbar() {
   }, []);
 
   return (
-    <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "py-3 bg-surface/70 backdrop-blur-xl border-b border-surface-variant/50 shadow-sm"
-          : "py-5 bg-transparent border-b border-transparent"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
+    <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[92vw] max-w-5xl transition-all duration-300">
+      <div 
+        className={`flex items-center justify-between px-6 md:px-8 py-3 rounded-full transition-all duration-500 ${
+          scrolled 
+            ? "bg-surface/70 backdrop-blur-2xl border border-primary/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)]" 
+            : "bg-surface/40 backdrop-blur-lg border border-surface-variant/30 shadow-sm"
+        }`}
+      >
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
           <span className="font-headline-sm text-[20px] md:text-[22px] font-bold text-primary group-hover:text-primary-container transition-colors">
             7x7
           </span>
-          <span className="font-body-md text-on-surface-variant hidden sm:inline-block">
+          <span className="font-body-md text-on-surface-variant hidden sm:inline-block font-medium">
             Journal
           </span>
         </Link>
