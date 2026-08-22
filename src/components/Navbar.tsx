@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SignInModal } from "./SignInModal";
+import { Logo } from "./Logo";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -25,12 +26,8 @@ export function Navbar() {
         }`}
       >
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <span className="font-headline-sm text-[20px] md:text-[22px] font-bold text-primary group-hover:text-primary-container transition-colors">
-            7x7
-          </span>
-          <span className="font-body-md text-on-surface-variant hidden sm:inline-block font-medium">  
-          </span>
+        <Link href="/" className="flex items-center group transition-transform duration-200 hover:scale-[1.02]">
+          <Logo className="h-7 md:h-8 w-auto" />
         </Link>
 
         {/* Desktop Links - Hidden on Mobile */}

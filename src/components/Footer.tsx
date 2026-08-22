@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "./Logo";
 
 export function Footer() {
   return (
@@ -6,9 +7,9 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
         
         {/* Brand */}
-        <div className="flex flex-col gap-4">
-          <Link href="/" className="font-headline-sm text-[20px] font-bold text-primary">
-            7x7 Journal
+        <div className="flex flex-col gap-4 items-center md:items-start">
+          <Link href="/" className="inline-block transition-transform duration-200 hover:scale-[1.02]">
+            <Logo className="h-8 w-auto" />
           </Link>
           <p className="text-[14px] text-secondary max-w-xs mx-auto md:mx-0">
             A minimalist approach to self-reflection. Ten days of disciplined, identical questions yielding transformative insights.
