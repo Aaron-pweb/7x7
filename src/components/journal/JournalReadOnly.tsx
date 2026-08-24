@@ -9,7 +9,6 @@ interface ReadOnlyProps {
   dayNumber: number;
   completedAt: Date | string | null;
   responses: {
-    promptIndex: number;
     promptText: string;
     answerText: string;
   }[];
@@ -17,9 +16,6 @@ interface ReadOnlyProps {
 
 export function JournalReadOnly({ dayNumber, completedAt, responses }: ReadOnlyProps) {
   const dateStr = completedAt ? format(new Date(completedAt), "MMMM d, yyyy") : "Unknown Date";
-
-  // Sort responses by index just in case
-  const sortedResponses = [...responses].sort((a, b) => a.promptIndex - b.promptIndex);
 
   return (
     <div className="w-full max-w-3xl mx-auto flex flex-col pt-8 pb-20">
@@ -42,10 +38,10 @@ export function JournalReadOnly({ dayNumber, completedAt, responses }: ReadOnlyP
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col gap-12"
       >
-        {sortedResponses.map((res, i) => (
-          <div key={res.promptIndex} className="flex flex-col gap-4">
+        {responses.map((res, i) => (
+          <div key={i} className="flex flex-col gap-4">
             <span className="text-primary font-bold text-xs uppercase tracking-widest">
-              Question {i + 1}
+              Prompt {i + 1}
             </span>
             <h3 className="text-xl md:text-2xl font-serif text-on-surface">
               {res.promptText}

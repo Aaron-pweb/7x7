@@ -1,134 +1,139 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useRef, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { Check } from "lucide-react";
 import { saveDailyEntry } from "@/app/actions/journal";
-import { SEVEN_PROMPTS } from "@/types/journal";
-import { ArrowRight, Check, ChevronLeft } from "lucide-react";
 
-interface JournalFormProps {
-  challengeId: string;
+interface Props {
+  userChallengeId: string;
   dayNumber: number;
   userId: string;
+  prompts: string[];
 }
 
-export function JournalForm({ challengeId, dayNumber, userId }: JournalFormProps) {
-  const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState<string[]>(Array(7).fill(""));
+export function JournalForm({ userChallengeId, dayNumber, userId, prompts }: Props) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState<string[]>(Array(prompts.length).fill(""));
   const [isPending, startTransition] = useTransition();
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const isLastPrompt = currentIndex === prompts.length - 1;
 
   const handleNext = () => {
-    if (answers[currentStep].trim() === "") return;
-    if (currentStep < 6) {
-      setCurrentStep((prev) => prev + 1);
-    } else {
-      submitEntry();
+    if (currentIndex < prompts.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+      setTimeout(() => inputRef.current?.focus(), 100);
     }
   };
 
   const handleBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep((prev) => prev - 1);
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+      setTimeout(() => inputRef.current?.focus(), 100);
     }
   };
 
-  const submitEntry = () => {
+  const handleSubmit = () => {
     startTransition(async () => {
-      const formattedAnswers = SEVEN_PROMPTS.map((prompt, index) => ({
-        promptIndex: prompt.id,
-        promptText: prompt.prompt,
-        answerText: answers[index]
+      const formattedAnswers = prompts.map((promptText, idx) => ({
+        promptText,
+        answerText: answers[idx]
       }));
-      
-      const result = await saveDailyEntry(challengeId, dayNumber, formattedAnswers, userId);
-      
-      if (result.success) {
-        router.push("/dashboard?completed=true");
-      } else {
-        alert(result.error);
-      }
+      await saveDailyEntry({ userId, userChallengeId, dayNumber, answers: formattedAnswers });
     });
   };
 
-  const prompt = SEVEN_PROMPTS[currentStep];
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+      isLastPrompt ? handleSubmit() : handleNext();
+    }
+  };
 
   return (
-    <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
-      {/* Progress Bar */}
+    <div className="w-full max-w-2xl flex flex-col items-center">
+      
+      {/* Header Info */}
       <div className="w-full flex items-center justify-between mb-12">
-        <button 
-          onClick={() => currentStep > 0 ? handleBack() : router.push("/dashboard")}
-          className="text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          <span className="text-sm font-medium">{currentStep > 0 ? "Previous" : "Dashboard"}</span>
-        </button>
+        <span className="text-sm font-bold text-on-surface-variant uppercase tracking-widest">
+          Day {dayNumber}
+        </span>
         <div className="flex gap-2">
-          {SEVEN_PROMPTS.map((_, idx) => (
+          {prompts.map((_, idx) => (
             <div 
-              key={idx} 
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                idx === currentStep ? "w-8 bg-primary" : 
-                idx < currentStep ? "w-2 bg-primary/50" : "w-2 bg-white/10"
+              key={idx}
+              className={`h-1.5 rounded-full transition-all duration-500 ${
+                idx === currentIndex ? "w-8 bg-primary" : idx < currentIndex ? "w-2 bg-primary/50" : "w-2 bg-white/10"
               }`}
             />
           ))}
         </div>
-        <div className="w-[80px]" /> {/* Spacer to balance flex layout */}
+        <span className="text-sm font-bold text-on-surface-variant">
+          {currentIndex + 1} / {prompts.length}
+        </span>
       </div>
 
-      {/* Main Form */}
-      <div className="w-full relative h-[400px]">
+      <div className="w-full relative h-[400px] flex flex-col">
         <AnimatePresence mode="wait">
           <motion.div
-            key={currentStep}
+            key={currentIndex}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
             className="absolute inset-0 flex flex-col"
           >
-            <span className="text-primary font-bold text-xs uppercase tracking-widest mb-4">
-              Question {currentStep + 1} of 7 • {prompt.category}
-            </span>
             <h2 className="text-2xl md:text-3xl font-serif text-on-surface mb-8 leading-tight">
-              {prompt.prompt}
+              {prompts[currentIndex]}
             </h2>
             
             <textarea
-              autoFocus
-              value={answers[currentStep]}
+              ref={inputRef}
+              value={answers[currentIndex]}
               onChange={(e) => {
                 const newAnswers = [...answers];
-                newAnswers[currentStep] = e.target.value;
+                newAnswers[currentIndex] = e.target.value;
                 setAnswers(newAnswers);
               }}
-              placeholder={prompt.placeholder}
-              className="w-full flex-grow bg-transparent border-b-2 border-white/10 focus:border-primary resize-none outline-none text-lg text-on-surface placeholder:text-white/20 transition-colors py-4 font-handwriting leading-relaxed"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleNext();
-                }
-              }}
+              onKeyDown={handleKeyDown}
+              className="flex-grow w-full bg-transparent text-xl md:text-2xl font-handwriting text-on-surface-variant placeholder:text-on-surface-variant/30 resize-none outline-none leading-relaxed"
+              placeholder="Write your reflection here..."
+              autoFocus
             />
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Action Area */}
-      <div className="w-full mt-8 flex justify-end">
+      {/* Navigation */}
+      <div className="w-full flex items-center justify-between mt-8 border-t border-white/10 pt-6">
         <button
-          onClick={handleNext}
-          disabled={answers[currentStep].trim() === "" || isPending}
-          className="flex items-center gap-2 px-8 py-3 bg-primary text-white font-medium rounded-full hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-95"
+          onClick={handleBack}
+          disabled={currentIndex === 0 || isPending}
+          className="px-6 py-3 text-sm font-bold text-on-surface-variant hover:text-on-surface disabled:opacity-30 transition-colors"
         >
-          {isPending ? "Saving..." : currentStep === 6 ? "Finish Entry" : "Next Question"}
-          {currentStep === 6 ? <Check className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
+          Previous
         </button>
+
+        {!isLastPrompt ? (
+          <button
+            onClick={handleNext}
+            disabled={!answers[currentIndex].trim()}
+            className="px-8 py-3 bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90 transition-all disabled:opacity-50 disabled:hover:bg-primary"
+          >
+            Next Prompt
+          </button>
+        ) : (
+          <button
+            onClick={handleSubmit}
+            disabled={!answers[currentIndex].trim() || isPending}
+            className="px-8 py-3 bg-secondary text-on-secondary rounded-full font-bold flex items-center gap-2 hover:bg-secondary/90 transition-all disabled:opacity-50"
+          >
+            {isPending ? "Saving..." : "Complete Day"}
+            {!isPending && <Check className="w-4 h-4" />}
+          </button>
+        )}
       </div>
+
     </div>
   );
 }

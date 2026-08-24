@@ -20,18 +20,17 @@ export default async function JournalPage({
   }
 
   const requestedDay = parseInt(searchParams.day as string);
+  const challengeId = searchParams.challengeId as string;
   
-  if (isNaN(requestedDay) || requestedDay < 1 || requestedDay > 10) {
+  if (isNaN(requestedDay) || requestedDay < 1 || !challengeId) {
     redirect("/dashboard");
   }
 
-  // Fetch the active challenge
-  const activeChallenge = await prisma.challenge.findFirst({
-    where: {
-      userId: user.id,
-      status: "ACTIVE"
-    },
+  // Fetch the specific user challenge
+  const activeChallenge = await prisma.userChallenge.findUnique({
+    where: { id: challengeId },
     include: {
+      template: true,
       entries: {
         include: {
           responses: true
@@ -40,19 +39,19 @@ export default async function JournalPage({
     }
   });
 
-  if (!activeChallenge) {
+  if (!activeChallenge || activeChallenge.userId !== user.id) {
     redirect("/dashboard");
   }
 
   // Determine the current day the user should be on
   const currentDayNumber = activeChallenge.entries.length + 1;
 
-  // Prevent users from jumping ahead
+  // Prevent jumping ahead
   if (requestedDay > currentDayNumber) {
-    redirect(`/journal?day=${currentDayNumber}`);
+    redirect(`/journal?challengeId=${challengeId}&day=${currentDayNumber}`);
   }
 
-  // If the requested day is already completed, show a read-only view
+  // If the requested day is already completed, show read-only view
   const completedEntry = activeChallenge.entries.find((e: any) => e.dayNumber === requestedDay);
   if (completedEntry) {
     return (
@@ -69,15 +68,18 @@ export default async function JournalPage({
     );
   }
 
+  const prompts = activeChallenge.template.prompts as string[];
+
   return (
     <div className="relative min-h-[100dvh] flex flex-col bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container">
       <ShaderBackground />
       
       <main className="flex-grow flex flex-col items-center justify-center relative z-10 px-4 md:px-8 w-full max-w-5xl mx-auto">
         <JournalForm 
-          challengeId={activeChallenge.id} 
+          userChallengeId={activeChallenge.id} 
           dayNumber={requestedDay} 
-          userId={user.id} 
+          userId={user.id}
+          prompts={prompts}
         />
       </main>
     </div>
