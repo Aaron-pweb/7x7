@@ -126,3 +126,24 @@ export async function saveDailyEntry(challengeId: string, dayNumber: number, ans
   revalidatePath("/journal");
   return { success: true };
 }
+
+export async function abandonActiveChallenge(userId: string) {
+  const activeChallenge = await prisma.challenge.findFirst({
+    where: { userId, status: "ACTIVE" }
+  });
+
+  if (!activeChallenge) {
+    return { error: "No active challenge found." };
+  }
+
+  await prisma.challenge.update({
+    where: { id: activeChallenge.id },
+    data: { 
+      status: "ABANDONED",
+      endDate: new Date()
+    }
+  });
+
+  revalidatePath("/dashboard");
+  return { success: true };
+}

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { ShaderBackground } from "@/components/ShaderBackground";
 import { JournalForm } from "@/components/journal/JournalForm";
+import { JournalReadOnly } from "@/components/journal/JournalReadOnly";
 import prisma from "@/utils/prisma";
 
 export const dynamic = "force-dynamic";
@@ -31,7 +32,11 @@ export default async function JournalPage({
       status: "ACTIVE"
     },
     include: {
-      entries: true
+      entries: {
+        include: {
+          responses: true
+        }
+      }
     }
   });
 
@@ -50,9 +55,18 @@ export default async function JournalPage({
   // If the requested day is already completed, show a read-only view
   const completedEntry = activeChallenge.entries.find((e: any) => e.dayNumber === requestedDay);
   if (completedEntry) {
-    // Ideally we would show a read-only view here, but for now redirect back to dashboard
-    // We can implement the read-only view in Phase 4.
-    redirect("/dashboard");
+    return (
+      <div className="relative min-h-[100dvh] flex flex-col bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container">
+        <ShaderBackground />
+        <main className="flex-grow flex flex-col items-center relative z-10 px-4 md:px-8 w-full max-w-5xl mx-auto">
+          <JournalReadOnly 
+            dayNumber={completedEntry.dayNumber}
+            completedAt={completedEntry.completedAt}
+            responses={completedEntry.responses}
+          />
+        </main>
+      </div>
+    );
   }
 
   return (
