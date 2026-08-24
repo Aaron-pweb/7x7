@@ -104,9 +104,9 @@ export function SignInModal({
   if (variant === "primary") {
     buttonClasses += "px-6 py-2.5 md:px-8 md:py-3 bg-primary text-on-primary text-[16px] md:text-[18px] rounded shadow-lg hover:bg-primary/90 hover:shadow-[0_8px_30px_rgba(167,50,28,0.3)]";
   } else if (variant === "outline") {
-    buttonClasses = "px-4 py-2 border border-surface-variant text-on-surface hover:bg-surface-variant transition-colors rounded text-[14px]";
+    buttonClasses = "px-3 py-1.5 md:px-4 md:py-2 border border-surface-variant text-on-surface hover:bg-surface-variant transition-colors rounded text-[12px] md:text-[14px]";
   } else {
-    buttonClasses = "px-4 py-2 text-secondary hover:text-primary transition-colors text-[14px]";
+    buttonClasses = "px-3 py-1.5 md:px-4 md:py-2 text-secondary hover:text-primary transition-colors text-[12px] md:text-[14px]";
   }
 
   if (user) {
