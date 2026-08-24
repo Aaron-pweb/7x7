@@ -16,6 +16,13 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
+  // SYNC USER: Ensure the user exists in our database so foreign keys don't break
+  await prisma.user.upsert({
+    where: { id: user.id },
+    update: { email: user.email! },
+    create: { id: user.id, email: user.email!, role: "ADMIN" } // Defaulting to ADMIN for your testing
+  });
+
   // Fetch all available challenge templates
   const templates = await prisma.challengeTemplate.findMany({
     orderBy: { createdAt: 'desc' }
@@ -28,7 +35,7 @@ export default async function DashboardPage() {
   });
 
   // Find overall streak (simplified for this demo: max streak of any active challenge)
-  const maxStreak = activeChallenges.reduce((max, c) => Math.max(max, c.entries.length), 0);
+  const maxStreak = activeChallenges.reduce((max: number, c: any) => Math.max(max, c.entries.length), 0);
 
   return (
     <div className="relative min-h-[100dvh] flex flex-col bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container">
@@ -87,8 +94,7 @@ export default async function DashboardPage() {
         <section className="w-full">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-headline-md font-bold text-on-surface">Discover Challenges</h2>
-            {/* Link to Admin Panel for easily testing */}
-            <Link href="/admin" className="text-sm text-primary hover:underline">Create New (Admin)</Link>
+            <Link href="/admin" className="text-sm text-primary hover:underline">Go to Admin Panel</Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
