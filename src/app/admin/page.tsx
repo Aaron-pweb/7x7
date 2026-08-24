@@ -1,26 +1,56 @@
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
-import { AdminForm } from "@/components/admin/AdminForm";
-import { ShaderBackground } from "@/components/ShaderBackground";
+import prisma from "@/utils/prisma";
+import { Users, FileText, Target } from "lucide-react";
 
-export default async function AdminPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+export const dynamic = "force-dynamic";
 
-  if (!user) {
-    redirect("/");
-  }
-
-  // NOTE: In a real app, you would verify user.role === "ADMIN" from your database.
-  // For now, since you are the only user testing, we will let you see the admin page.
+export default async function AdminOverview() {
+  const [totalUsers, totalTemplates, totalActiveChallenges, totalEntries] = await Promise.all([
+    prisma.user.count(),
+    prisma.challengeTemplate.count(),
+    prisma.userChallenge.count({ where: { status: "ACTIVE" } }),
+    prisma.dailyEntry.count()
+  ]);
 
   return (
-    <div className="relative min-h-[100dvh] flex flex-col bg-background text-on-background">
-      <ShaderBackground />
-      <main className="flex-grow flex flex-col relative z-10 px-4 pt-24 pb-16 w-full max-w-4xl mx-auto">
-        <h1 className="text-4xl font-headline-md font-bold mb-8">Create New Challenge</h1>
-        <AdminForm />
-      </main>
+    <div className="flex flex-col gap-8">
+      <div>
+        <h1 className="text-3xl font-bold font-headline-md mb-2">Platform Overview</h1>
+        <p className="text-white/60">Welcome to the 7x7 administrative dashboard.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-4">
+          <Users className="w-8 h-8 text-primary" />
+          <div>
+            <p className="text-sm font-medium text-white/50">Total Users</p>
+            <p className="text-3xl font-bold">{totalUsers}</p>
+          </div>
+        </div>
+        
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-4">
+          <Target className="w-8 h-8 text-primary" />
+          <div>
+            <p className="text-sm font-medium text-white/50">Available Templates</p>
+            <p className="text-3xl font-bold">{totalTemplates}</p>
+          </div>
+        </div>
+
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-4">
+          <Target className="w-8 h-8 text-secondary" />
+          <div>
+            <p className="text-sm font-medium text-white/50">Active User Journeys</p>
+            <p className="text-3xl font-bold">{totalActiveChallenges}</p>
+          </div>
+        </div>
+
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-4">
+          <FileText className="w-8 h-8 text-primary" />
+          <div>
+            <p className="text-sm font-medium text-white/50">Total Daily Entries</p>
+            <p className="text-3xl font-bold">{totalEntries}</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
