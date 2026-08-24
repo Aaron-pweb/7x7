@@ -7,11 +7,12 @@ import prisma from "@/utils/prisma";
 
 export const dynamic = "force-dynamic";
 
-export default async function JournalPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+type Props = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export default async function JournalPage(props: Props) {
+  const searchParams = await props.searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
