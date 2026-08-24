@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
 }
 
 generator client {
@@ -7,14 +7,29 @@ generator client {
 }
 
 model User {
-  id           String       @id // Matches Supabase Auth user.id
-  email        String       @unique
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  challenges   Challenge[]
-  dailyEntries DailyEntry[]
+  id             String          @id // Matches Supabase Auth user.id
+  email          String          @unique
+  role           String          @default("USER") // USER or ADMIN
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  userChallenges UserChallenge[]
+  dailyEntries   DailyEntry[]
 
   @@map("users")
+}
+
+model ChallengeTemplate {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  duration    Int      // e.g., 10, 21, 30 days
+  prompts     Json     // Array of strings: ["How did it feel?", "What did you learn?"]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  userChallenges UserChallenge[]
+
+  @@map("challenge_templates")
 }
 
 enum ChallengeStatus {
@@ -23,34 +38,36 @@ enum ChallengeStatus {
   ABANDONED
 }
 
-model Challenge {
-  id          String          @id @default(cuid())
-  userId      String
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  startDate   DateTime        @default(now())
-  endDate     DateTime?
-  status      ChallengeStatus @default(ACTIVE)
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  entries     DailyEntry[]
+model UserChallenge {
+  id                  String            @id @default(cuid())
+  userId              String
+  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challengeTemplateId String
+  template            ChallengeTemplate @relation(fields: [challengeTemplateId], references: [id], onDelete: Cascade)
+  startDate           DateTime          @default(now())
+  endDate             DateTime?
+  status              ChallengeStatus   @default(ACTIVE)
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  entries             DailyEntry[]
 
   @@index([userId, status])
-  @@map("challenges")
+  @@map("user_challenges")
 }
 
 model DailyEntry {
-  id          String             @id @default(cuid())
-  challengeId String
-  challenge   Challenge          @relation(fields: [challengeId], references: [id], onDelete: Cascade)
-  userId      String
-  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  dayNumber   Int                // 1 to 10
-  completedAt DateTime?
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
-  responses   QuestionResponse[]
+  id              String             @id @default(cuid())
+  userChallengeId String
+  userChallenge   UserChallenge      @relation(fields: [userChallengeId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dayNumber       Int                
+  completedAt     DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  responses       QuestionResponse[]
 
-  @@unique([challengeId, dayNumber])
+  @@unique([userChallengeId, dayNumber])
   @@index([userId, dayNumber])
   @@map("daily_entries")
 }
@@ -59,12 +76,10 @@ model QuestionResponse {
   id           String     @id @default(cuid())
   dailyEntryId String
   dailyEntry   DailyEntry @relation(fields: [dailyEntryId], references: [id], onDelete: Cascade)
-  promptIndex  Int        // 1 through 7
   promptText   String
   answerText   String     @default("")
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
-  @@unique([dailyEntryId, promptIndex])
   @@map("question_responses")
 }
