@@ -6,6 +6,7 @@ import { createClient } from "@/utils/supabase/client";
 import { Logo } from "@/components/Logo";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
+import { DashboardSettings } from "./DashboardSettings";
 
 interface DashboardHeaderProps {
   streak?: number;
@@ -56,6 +57,7 @@ export function DashboardHeader({ streak = 0 }: DashboardHeaderProps) {
 
           {/* User Profile Pill */}
           <div className="flex items-center gap-2 pl-2 border-l border-surface-variant/50">
+            {user && <DashboardSettings userId={user.id} />}
             <span className="hidden sm:inline-block text-[13px] text-on-surface-variant font-medium max-w-[120px] truncate">
               {displayName}
             </span>
