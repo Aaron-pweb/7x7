@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "7x7 Journal",
   },
   formatDetection: {
@@ -39,6 +39,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable} ${caveat.variable} antialiased selection:bg-primary/20 selection:text-primary`}>
+      <head>
+      </head>
       <body className="min-h-screen bg-background text-on-background">
         {children}
       </body>

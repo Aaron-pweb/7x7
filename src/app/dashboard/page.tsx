@@ -42,7 +42,7 @@ export default async function DashboardPage() {
       <ShaderBackground />
       <DashboardHeader streak={maxStreak} />
       
-      <main className="flex-grow flex flex-col items-center relative z-10 px-4 md:px-8 pt-[100px] md:pt-[130px] pb-16 w-full max-w-5xl mx-auto gap-10 md:gap-14">
+      <main className="flex-grow flex flex-col items-center relative z-10 px-4 md:px-8 pt-[calc(env(safe-area-inset-top)+100px)] md:pt-[130px] pb-[calc(env(safe-area-inset-bottom)+20px)] pb-16 w-full max-w-5xl mx-auto gap-10 md:gap-14">
         
         {/* Active Challenges */}
         <section className="w-full">

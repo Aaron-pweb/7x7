@@ -96,7 +96,7 @@ export function JournalForm({ userChallengeId, dayNumber, userId, prompts }: Pro
                 setAnswers(newAnswers);
               }}
               onKeyDown={handleKeyDown}
-              className="flex-grow w-full bg-transparent text-xl md:text-2xl font-handwriting text-on-surface-variant placeholder:text-on-surface-variant/30 resize-none outline-none leading-relaxed"
+              className="appearance-none flex-grow w-full bg-transparent text-xl md:text-2xl font-handwriting text-on-surface-variant placeholder:text-on-surface-variant/30 resize-none outline-none leading-relaxed"
               placeholder="Write your reflection here..."
               autoFocus
             />
