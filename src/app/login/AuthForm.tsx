@@ -55,7 +55,7 @@ export function AuthForm() {
 
     try {
       if (isSignUp) {
-        const { error: signUpError } = await supabase.auth.signUp({
+        const { data, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -63,8 +63,14 @@ export function AuthForm() {
           },
         });
         if (signUpError) throw signUpError;
-        alert("Check your email for the confirmation link!");
-        router.push("/");
+        
+        if (data.session) {
+          router.push("/dashboard");
+          router.refresh();
+        } else {
+          alert("Check your email for the confirmation link! (Check Spam if you don't see it)");
+          router.push("/");
+        }
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
