@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/utils/supabase/client";
-import { createPortal } from "react-dom";
 
 export function SignInModal({ 
   defaultIsSignUp = false, 
@@ -24,12 +23,10 @@ export function SignInModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
-  const [mounted, setMounted] = useState(false);
   
   const emailInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setMounted(true);
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
     });
@@ -50,6 +47,7 @@ export function SignInModal({
     } else {
       document.body.style.overflow = "unset";
     }
+    
     return () => {
       document.body.style.overflow = "unset";
     };
@@ -59,69 +57,80 @@ export function SignInModal({
     e.preventDefault();
     setLoading(true);
     setError(null);
-    
-    let authError;
 
-    if (isSignUp) {
-      const { error } = await supabase.auth.signUp({ email, password });
-      authError = error;
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      authError = error;
-    }
-
-    if (authError) {
-      setError(authError.message);
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+          },
+        });
+        if (error) throw error;
+        setError("Check your email for the confirmation link.");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        setIsOpen(false);
+        router.push("/dashboard");
+        router.refresh();
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
       setLoading(false);
-    } else {
-      router.push("/journal");
     }
   };
 
   const handleGoogleAuth = async () => {
     setLoading(true);
     setError(null);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-
-    if (error) {
-      setError(error.message);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (err: any) {
+      setError(err.message);
       setLoading(false);
     }
   };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    router.push("/");
+    setUser(null);
+    router.refresh();
   };
 
-  // Determine button styles based on variant
   let buttonClasses = "transition-all duration-300 font-medium ";
   if (variant === "primary") {
     buttonClasses += "px-6 py-2.5 md:px-8 md:py-3 bg-primary text-on-primary text-[16px] md:text-[18px] rounded shadow-lg hover:bg-primary/90 hover:shadow-[0_8px_30px_rgba(167,50,28,0.3)]";
   } else if (variant === "outline") {
     buttonClasses = "px-3 py-1.5 md:px-4 md:py-2 border border-surface-variant text-on-surface hover:bg-surface-variant transition-colors rounded text-[12px] md:text-[14px]";
   } else {
-    buttonClasses = "px-3 py-1.5 md:px-4 md:py-2 text-secondary hover:text-primary transition-colors text-[12px] md:text-[14px]";
+    buttonClasses = "px-3 py-1.5 md:px-4 md:py-2 text-secondary hover:text-primary transition-colors text-[14px]";
   }
 
   if (user) {
-    if (variant === "ghost") return null; // Don't show multiple sign out buttons
+    if (variant === "ghost") return null; 
     return (
-      <div className="flex items-center gap-3 md:gap-4">
+      <div className="flex items-center gap-3 md:gap-4 pointer-events-auto">
         <button
           onClick={() => router.push("/dashboard")}
           className="px-4 py-2 bg-primary text-on-primary font-body-md text-[13px] md:text-[14px] rounded hover:bg-primary-container transition-colors"
         >
-          Dashboard
+          Go to Dashboard
         </button>
         <button
           onClick={handleSignOut}
-          className="text-[13px] md:text-[14px] text-secondary hover:text-primary transition-colors"
+          className="text-[13px] md:text-[14px] text-error hover:text-error/80 transition-colors font-medium"
         >
           Sign Out
         </button>
@@ -133,11 +142,11 @@ export function SignInModal({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 backdrop-blur-md bg-[#120F0F]/40"
+          initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+          animate={{ opacity: 1, backdropFilter: "blur(12px)" }}
+          exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+          transition={{ duration: 0.4 }}
+          className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-background/40 overflow-y-auto"
           onClick={() => setIsOpen(false)}
         >
           <motion.div
@@ -145,7 +154,7 @@ export function SignInModal({
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 20, opacity: 0, scale: 0.95 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className="w-full max-w-md bg-surface/95 backdrop-blur-3xl border border-primary/10 p-8 md:p-10 relative overflow-hidden flex flex-col gap-6 rounded-2xl shadow-[0_20px_60px_-15px_rgba(167,50,28,0.15)]"
+            className="w-full max-w-md bg-surface/95 backdrop-blur-3xl border border-primary/10 p-8 md:p-10 relative overflow-hidden flex flex-col gap-6 rounded-2xl shadow-[0_20px_60px_-15px_rgba(167,50,28,0.15)] my-auto"
             onClick={(e) => e.stopPropagation()}
           >
             
@@ -168,9 +177,6 @@ export function SignInModal({
               </p>
             </div>
 
-
-
-            {/* Reserved Space to Prevent Layout Shift */}
             <div className="h-10 w-full flex items-center justify-center -my-2">
               <AnimatePresence mode="wait">
                 {error && (
@@ -273,8 +279,6 @@ export function SignInModal({
                 </>
               )}
             </div>
-            
-            
           </motion.div>
         </motion.div>
       )}
@@ -285,7 +289,7 @@ export function SignInModal({
     <>
       <button
         onClick={() => {
-          setIsSignUp(defaultIsSignUp);
+          alert("Button Clicked!"); setIsSignUp(defaultIsSignUp);
           setIsOpen(true);
         }}
         className={buttonClasses}
@@ -293,7 +297,7 @@ export function SignInModal({
         <span className="relative z-10">{triggerLabel || (defaultIsSignUp ? "Sign Up" : "Log In")}</span>
       </button>
 
-      {mounted && createPortal(modalContent, document.body)}
+      {modalContent}
     </>
   );
 }
