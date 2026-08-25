@@ -1,12 +1,12 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { ShaderBackground } from "@/components/ShaderBackground";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SignInModal } from "@/components/SignInModal";
+import { getCachedChallenges } from "@/utils/challenges";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const challenges = await getCachedChallenges();
+
   return (
     <div className="relative min-h-screen flex flex-col bg-background text-on-background w-full">
       <ShaderBackground />
@@ -31,6 +31,27 @@ export default function LandingPage() {
           </div>
           
         </section>
+
+        {challenges.length > 0 && (
+          <section className="w-full max-w-5xl mx-auto mt-32 flex flex-col gap-8 relative z-20">
+            <div className="text-center">
+              <h2 className="text-2xl md:text-3xl font-headline-md font-bold text-on-surface">Available Challenges</h2>
+              <p className="text-on-surface-variant mt-2">Pick a journey and start reflecting.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {challenges.map((challenge) => (
+                <div key={challenge.id} className="bg-surface/60 backdrop-blur-md border border-surface-variant/50 p-6 rounded-2xl shadow-sm flex flex-col gap-4 hover:shadow-md transition-shadow text-left">
+                  <div className="flex items-center justify-between">
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">{challenge.duration} Days</span>
+                  </div>
+                  <h3 className="text-xl font-bold font-headline-md text-on-surface">{challenge.title}</h3>
+                  <p className="text-sm text-on-surface-variant flex-grow">{challenge.description}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
 
       <Footer />
