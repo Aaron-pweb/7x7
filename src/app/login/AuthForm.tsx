@@ -31,6 +31,25 @@ export function AuthForm() {
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Explicit UI form validation because iOS PWAs silently suppress HTML5 validation popups
+    if (!email.trim()) {
+      setError("Please enter your email address.");
+      return;
+    }
+    if (!email.includes("@")) {
+      setError("Please enter a valid email address (e.g. you@example.com).");
+      return;
+    }
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
+    if (isSignUp && password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -65,8 +84,6 @@ export function AuthForm() {
     setLoading(true);
     setError(null);
     try {
-      // Security Check: Supabase explicitly rejects local IP addresses unless whitelisted.
-      // We must warn the user if they are on a mobile device testing locally.
       const isLocalNetworkIP = window.location.hostname !== 'localhost' && window.location.hostname.match(/^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/);
       
       if (isLocalNetworkIP) {
@@ -77,14 +94,14 @@ export function AuthForm() {
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
-          skipBrowserRedirect: true, // Fix for iOS PWA redirect blocking
+          skipBrowserRedirect: true,
         },
       });
       
       if (googleError) throw googleError;
       
       if (data?.url) {
-        window.location.href = data.url; // Manually navigate to bypass PWA sandbox
+        window.location.href = data.url; 
       }
     } catch (err: any) {
       setError(err.message);
@@ -128,7 +145,7 @@ export function AuthForm() {
         </AnimatePresence>
       </div>
 
-      <form onSubmit={handleEmailAuth} className="flex flex-col gap-4">
+      <form onSubmit={handleEmailAuth} className="flex flex-col gap-4" noValidate>
         <div className="flex flex-col gap-1.5">
           <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-widest">
             Email Address
@@ -136,10 +153,12 @@ export function AuthForm() {
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (error) setError(null);
+            }}
             className="w-full bg-surface-variant/30 sm:bg-transparent border-0 border-b border-surface-variant px-2 sm:px-0 py-2 text-[15px] sm:text-[16px] text-on-surface focus:ring-0 focus:border-primary transition-colors duration-300 placeholder-secondary-fixed-dim outline-none rounded-t-md sm:rounded-none"
             placeholder="scholar@example.edu"
-            required
           />
         </div>
 
@@ -150,10 +169,12 @@ export function AuthForm() {
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (error) setError(null);
+            }}
             className="w-full bg-surface-variant/30 sm:bg-transparent border-0 border-b border-surface-variant px-2 sm:px-0 py-2 text-[15px] sm:text-[16px] text-on-surface focus:ring-0 focus:border-primary transition-colors duration-300 placeholder-secondary-fixed-dim outline-none rounded-t-md sm:rounded-none"
             placeholder="••••••••"
-            required
           />
         </div>
 
