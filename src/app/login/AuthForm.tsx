@@ -57,12 +57,14 @@ export function AuthForm() {
       }
     } catch (err: any) {
       setError(err.message);
+      setLoading(false);
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleAuth = async () => {
+    setLoading(true);
     try {
       const { error: googleError } = await supabase.auth.signInWithOAuth({
         provider: "google",
@@ -71,8 +73,10 @@ export function AuthForm() {
         },
       });
       if (googleError) throw googleError;
+      // Note: We do not set loading to false on success because the page will redirect
     } catch (err: any) {
       setError(err.message);
+      setLoading(false);
     }
   };
 
