@@ -40,6 +40,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable} ${caveat.variable} antialiased selection:bg-primary/20 selection:text-primary`}>
       <head>
+        <script src="https://cdn.jsdelivr.net/npm/eruda" async></script>
+        <script dangerouslySetInnerHTML={{ __html: 'window.onload = function () { if (typeof eruda !== "undefined") eruda.init(); }' }}></script>
       </head>
       <body className="min-h-screen bg-background text-on-background">
         {children}
