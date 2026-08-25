@@ -35,7 +35,6 @@ export function Navbar() {
 
           {/* Auth Actions */}
           <div className="flex items-center gap-2 md:gap-4">
-            <SignInModal triggerLabel="Log In" defaultIsSignUp={false} variant="ghost" />
             <SignInModal triggerLabel="Sign Up" defaultIsSignUp={true} variant="outline" />
           </div>
         </div>
