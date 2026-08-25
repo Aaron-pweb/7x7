@@ -18,22 +18,26 @@ export function Navbar() {
 
   return (
     <header className="fixed top-4 left-0 right-0 z-[100] w-full px-4 md:px-8 pointer-events-none">
-      <div 
-        className={`pointer-events-auto max-w-5xl mx-auto flex items-center justify-between px-4 md:px-8 py-3 rounded-full transition-all duration-300 ${
+      <div className="relative max-w-5xl mx-auto">
+        {/* Separated Blur Background Layer */}
+        <div className={`absolute inset-0 rounded-full pointer-events-none transition-all duration-300 ${
           scrolled 
             ? "bg-surface/90 backdrop-blur-md shadow-lg border border-primary/20" 
             : "bg-surface/80 backdrop-blur-md shadow-sm border border-surface-variant/30"
-        }`}
-      >
-        {/* Logo */}
-        <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
-          <Logo className="h-7 md:h-9 w-auto" />
-        </Link>
+        }`} />
+        
+        {/* Interactive Content Layer */}
+        <div className="relative pointer-events-auto flex items-center justify-between px-4 md:px-8 py-3 rounded-full">
+          {/* Logo */}
+          <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
+            <Logo className="h-7 md:h-9 w-auto" />
+          </Link>
 
-        {/* Auth Actions */}
-        <div className="flex items-center gap-2 md:gap-4">
-          <SignInModal triggerLabel="Log In" defaultIsSignUp={false} variant="ghost" />
-          <SignInModal triggerLabel="Sign Up" defaultIsSignUp={true} variant="outline" />
+          {/* Auth Actions */}
+          <div className="flex items-center gap-2 md:gap-4">
+            <SignInModal triggerLabel="Log In" defaultIsSignUp={false} variant="ghost" />
+            <SignInModal triggerLabel="Sign Up" defaultIsSignUp={true} variant="outline" />
+          </div>
         </div>
       </div>
     </header>

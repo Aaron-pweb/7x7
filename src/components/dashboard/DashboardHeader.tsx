@@ -35,8 +35,12 @@ export function DashboardHeader({ streak = 0 }: DashboardHeaderProps) {
   const displayName = userEmail.split("@")[0];
 
   return (
-    <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-50 w-[94vw] max-w-6xl transition-all duration-300">
-      <div className="flex items-center justify-between px-5 md:px-8 py-2.5 md:py-3 rounded-full bg-surface/75 backdrop-blur-2xl border border-primary/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+    <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-50 w-[94vw] max-w-6xl transition-all duration-300 pointer-events-none">
+      {/* Separated Blur Background Layer */}
+      <div className="absolute inset-0 rounded-full bg-surface/75 backdrop-blur-2xl border border-primary/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] pointer-events-none" />
+      
+      {/* Interactive Content Layer */}
+      <div className="relative pointer-events-auto flex items-center justify-between px-5 md:px-8 py-2.5 md:py-3 rounded-full">
         
         {/* Brand Logo */}
         <Link href="/dashboard" className="flex items-center group transition-transform duration-200 hover:scale-[1.02]">
