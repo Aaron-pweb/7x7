@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,14 +9,12 @@ import Link from "next/link";
 export function AuthForm() {
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode");
-  const [isSignUp, setIsSignUp] = useState(mode === "signup");
+  const isSignUp = mode === "signup";
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  const emailInputRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
   const supabase = createClient();
@@ -82,7 +80,7 @@ export function AuthForm() {
     <>
       <Link 
         href="/"
-        className="absolute top-6 right-6 p-2 text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-primary/5"
+        className="absolute top-4 right-4 p-2 text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-primary/5 z-20"
         aria-label="Back to home"
       >
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -90,20 +88,20 @@ export function AuthForm() {
         </svg>
       </Link>
 
-      <div className="flex flex-col gap-2 text-center mt-2">
-        <h1 className="text-[28px] md:text-[32px] font-headline-md text-on-surface leading-tight">
+      <div className="flex flex-col gap-1 text-center mt-2 mb-4">
+        <h1 className="text-2xl sm:text-3xl font-headline-md text-on-surface leading-tight">
           {isSignUp ? "Create Account" : "Welcome Back"}
         </h1>
-        <p className="text-[14px] md:text-[16px] text-on-surface-variant">
+        <p className="text-[13px] sm:text-[15px] text-on-surface-variant">
           {isSignUp ? "Start your journaling journey today." : "Enter your credentials to access your journal."}
         </p>
       </div>
 
-      <div className="h-10 w-full flex items-center justify-center -my-2">
+      <div className="min-h-[36px] w-full flex items-center justify-center mb-2">
         <AnimatePresence mode="wait">
           {error && (
             <motion.div 
-              initial={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               className="w-full px-3 py-2 bg-error/10 border border-error/20 text-error rounded-md text-[13px] text-center font-medium"
@@ -114,31 +112,30 @@ export function AuthForm() {
         </AnimatePresence>
       </div>
 
-      <form onSubmit={handleEmailAuth} className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] md:text-[12px] font-semibold text-on-surface-variant uppercase tracking-widest">
+      <form onSubmit={handleEmailAuth} className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-widest">
             Email Address
           </label>
           <input
-            ref={emailInputRef}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-transparent border-0 border-b border-surface-variant px-0 py-2 text-[16px] text-on-surface focus:ring-0 focus:border-primary transition-colors duration-300 placeholder-secondary-fixed-dim outline-none"
+            className="w-full bg-transparent border-0 border-b border-surface-variant px-0 py-1.5 text-[15px] sm:text-[16px] text-on-surface focus:ring-0 focus:border-primary transition-colors duration-300 placeholder-secondary-fixed-dim outline-none"
             placeholder="scholar@example.edu"
             required
           />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] md:text-[12px] font-semibold text-on-surface-variant uppercase tracking-widest">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-widest">
             Password
           </label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-transparent border-0 border-b border-surface-variant px-0 py-2 text-[16px] text-on-surface focus:ring-0 focus:border-primary transition-colors duration-300 placeholder-secondary-fixed-dim outline-none"
+            className="w-full bg-transparent border-0 border-b border-surface-variant px-0 py-1.5 text-[15px] sm:text-[16px] text-on-surface focus:ring-0 focus:border-primary transition-colors duration-300 placeholder-secondary-fixed-dim outline-none"
             placeholder="••••••••"
             required
           />
@@ -147,23 +144,13 @@ export function AuthForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-primary text-on-primary py-3.5 mt-2 text-[16px] font-medium hover:bg-primary/90 transition-colors duration-300 rounded disabled:opacity-50 relative overflow-hidden shadow-sm"
+          className="w-full bg-primary text-on-primary py-3 mt-2 text-[15px] font-medium hover:bg-primary/90 transition-colors duration-300 rounded disabled:opacity-50 relative overflow-hidden shadow-sm"
         >
-          {loading ? (
-            <span className="flex items-center justify-center gap-2">
-              <svg className="animate-spin h-5 w-5 text-on-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Authenticating...
-            </span>
-          ) : (
-            isSignUp ? "Create Account" : "Log In"
-          )}
+          {loading ? "Authenticating..." : (isSignUp ? "Create Account" : "Log In")}
         </button>
       </form>
 
-      <div className="relative flex py-1 items-center">
+      <div className="relative flex py-4 items-center">
         <div className="flex-grow border-t border-surface-variant"></div>
         <span className="flex-shrink-0 mx-4 text-on-surface-variant font-label-caps text-[11px] uppercase tracking-widest">OR</span>
         <div className="flex-grow border-t border-surface-variant"></div>
@@ -172,7 +159,7 @@ export function AuthForm() {
       <button
         onClick={handleGoogleAuth}
         disabled={loading}
-        className="w-full flex items-center justify-center gap-3 bg-surface border border-surface-variant px-4 py-3.5 text-on-surface font-body-md text-[15px] hover:bg-surface-variant transition-colors duration-300 rounded disabled:opacity-50 shadow-sm"
+        className="w-full flex items-center justify-center gap-3 bg-surface border border-surface-variant px-4 py-3 text-on-surface font-body-md text-[14px] hover:bg-surface-variant transition-colors duration-300 rounded disabled:opacity-50 shadow-sm"
         type="button"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -184,20 +171,20 @@ export function AuthForm() {
         Continue with Google
       </button>
       
-      <div className="mt-2 text-center text-[13px] md:text-[14px] text-on-surface-variant font-body-md">
+      <div className="mt-4 text-center text-[13px] text-on-surface-variant font-body-md">
         {isSignUp ? (
           <>
             Already have an account?{" "}
-            <button onClick={() => setIsSignUp(false)} className="text-primary font-semibold hover:underline underline-offset-4">
+            <Link href="/login?mode=login" className="text-primary font-semibold hover:underline underline-offset-4">
               Log in
-            </button>
+            </Link>
           </>
         ) : (
           <>
             Don't have an account?{" "}
-            <button onClick={() => setIsSignUp(true)} className="text-primary font-semibold hover:underline underline-offset-4">
+            <Link href="/login?mode=signup" className="text-primary font-semibold hover:underline underline-offset-4">
               Sign up
-            </button>
+            </Link>
           </>
         )}
       </div>
