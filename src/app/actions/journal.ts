@@ -66,3 +66,23 @@ export async function saveDailyEntry(data: {
   revalidatePath("/dashboard");
   return { success: true };
 }
+
+export async function deleteChallengeTemplate(id: string) {
+  await prisma.challengeTemplate.delete({ where: { id } });
+  revalidatePath("/admin/challenges");
+  revalidatePath("/dashboard");
+  revalidatePath("/");
+}
+
+export async function deleteUser(id: string) {
+  await prisma.user.delete({ where: { id } });
+  revalidatePath("/admin/users");
+}
+
+export async function toggleAdminRole(id: string, currentRole: string) {
+  await prisma.user.update({
+    where: { id },
+    data: { role: currentRole === "ADMIN" ? "USER" : "ADMIN" }
+  });
+  revalidatePath("/admin/users");
+}

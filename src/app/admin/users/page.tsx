@@ -1,5 +1,7 @@
 import prisma from "@/utils/prisma";
 import { format } from "date-fns";
+import { deleteUser, toggleAdminRole } from "@/app/actions/journal";
+import { Trash2, Shield, ShieldOff } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -16,37 +18,60 @@ export default async function UsersPage() {
   return (
     <div className="flex flex-col gap-10">
       <div>
-        <h1 className="text-3xl font-bold font-headline-md mb-2">Platform Users</h1>
-        <p className="text-white/60">View and manage all registered users.</p>
+        <h1 className="text-3xl font-bold font-headline-md mb-2 text-on-background">Platform Users</h1>
+        <p className="text-on-surface-variant">View and manage all registered users.</p>
       </div>
 
-      <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-white/5 border-b border-white/10">
-            <tr>
-              <th className="px-6 py-4 font-medium text-white/50">Email</th>
-              <th className="px-6 py-4 font-medium text-white/50">Role</th>
-              <th className="px-6 py-4 font-medium text-white/50">Active Journeys</th>
-              <th className="px-6 py-4 font-medium text-white/50">Total Entries</th>
-              <th className="px-6 py-4 font-medium text-white/50">Joined At</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {users.map( (u: any) => (
-              <tr key={u.id} className="hover:bg-white/5 transition-colors">
-                <td className="px-6 py-4 font-medium">{u.email}</td>
-                <td className="px-6 py-4 text-white/70">
-                  <span className={`px-2 py-1 rounded-md text-xs font-bold ${u.role === 'ADMIN' ? 'bg-primary/20 text-primary' : 'bg-white/10 text-white/70'}`}>
-                    {u.role}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-white/70">{u._count.userChallenges}</td>
-                <td className="px-6 py-4 text-white/70">{u._count.dailyEntries}</td>
-                <td className="px-6 py-4 text-white/70">{format(new Date(u.createdAt), "MMM d, yyyy")}</td>
+      <div className="bg-surface border border-surface-variant rounded-2xl overflow-hidden shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-surface-variant/30 border-b border-surface-variant">
+              <tr>
+                <th className="px-6 py-4 font-medium text-on-surface-variant">Email</th>
+                <th className="px-6 py-4 font-medium text-on-surface-variant">Role</th>
+                <th className="px-6 py-4 font-medium text-on-surface-variant">Active Journeys</th>
+                <th className="px-6 py-4 font-medium text-on-surface-variant">Total Entries</th>
+                <th className="px-6 py-4 font-medium text-on-surface-variant">Joined At</th>
+                <th className="px-6 py-4 font-medium text-on-surface-variant text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-surface-variant">
+              {users.map( (u: any) => (
+                <tr key={u.id} className="hover:bg-surface-variant/10 transition-colors">
+                  <td className="px-6 py-4 font-medium text-on-surface">{u.email}</td>
+                  <td className="px-6 py-4">
+                    <span className={`px-2 py-1 rounded-md text-[10px] uppercase tracking-wider font-bold ${u.role === 'ADMIN' ? 'bg-primary/20 text-primary' : 'bg-surface-variant text-on-surface-variant'}`}>
+                      {u.role}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-on-surface-variant">{u._count.userChallenges}</td>
+                  <td className="px-6 py-4 text-on-surface-variant">{u._count.dailyEntries}</td>
+                  <td className="px-6 py-4 text-on-surface-variant">{format(new Date(u.createdAt), "MMM d, yyyy")}</td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <form action={async () => {
+                        "use server";
+                        await toggleAdminRole(u.id, u.role);
+                      }}>
+                        <button type="submit" className="p-2 text-on-surface-variant hover:bg-surface-variant hover:text-on-surface rounded-lg transition-colors" title={u.role === "ADMIN" ? "Revoke Admin" : "Make Admin"}>
+                          {u.role === "ADMIN" ? <ShieldOff className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
+                        </button>
+                      </form>
+                      <form action={async () => {
+                        "use server";
+                        await deleteUser(u.id);
+                      }}>
+                        <button type="submit" className="p-2 text-error hover:bg-error/10 rounded-lg transition-colors" title="Delete user">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

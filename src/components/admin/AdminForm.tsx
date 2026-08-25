@@ -36,44 +36,44 @@ export function AdminForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6 bg-white/5 p-6 rounded-2xl border border-white/10">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6 bg-surface p-6 rounded-2xl border border-surface-variant shadow-sm">
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-bold text-white/50">Challenge Title</label>
+        <label className="text-sm font-bold text-on-surface-variant">Challenge Title</label>
         <input 
           required 
           value={title} 
           onChange={e => setTitle(e.target.value)} 
-          className="w-full bg-black/50 text-white rounded-xl px-4 py-3 border border-transparent focus:border-primary/50 outline-none" 
+          className="w-full bg-surface-variant/30 text-on-surface rounded-xl px-4 py-3 border border-transparent focus:border-primary/50 outline-none" 
           placeholder="e.g. 21 Days of Left Hand Writing"
         />
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-bold text-white/50">Description</label>
+        <label className="text-sm font-bold text-on-surface-variant">Description</label>
         <textarea 
           required 
           value={description} 
           onChange={e => setDescription(e.target.value)} 
-          className="w-full bg-black/50 text-white rounded-xl px-4 py-3 border border-transparent focus:border-primary/50 outline-none min-h-[100px]" 
+          className="w-full bg-surface-variant/30 text-on-surface rounded-xl px-4 py-3 border border-transparent focus:border-primary/50 outline-none min-h-[100px]" 
           placeholder="Describe the challenge..."
         />
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-bold text-white/50">Duration (Days)</label>
+        <label className="text-sm font-bold text-on-surface-variant">Duration (Days)</label>
         <input 
           required 
           type="number" 
           min="1" 
           value={duration} 
           onChange={e => setDuration(parseInt(e.target.value))} 
-          className="w-full bg-black/50 text-white rounded-xl px-4 py-3 border border-transparent focus:border-primary/50 outline-none" 
+          className="w-full bg-surface-variant/30 text-on-surface rounded-xl px-4 py-3 border border-transparent focus:border-primary/50 outline-none" 
         />
       </div>
 
       <div className="flex flex-col gap-4 mt-4">
         <div className="flex items-center justify-between">
-          <label className="text-sm font-bold text-white/50">Daily Prompts</label>
+          <label className="text-sm font-bold text-on-surface-variant">Daily Prompts</label>
           <button type="button" onClick={handleAddPrompt} className="text-primary flex items-center gap-1 text-sm font-bold hover:text-primary/80">
             <Plus className="w-4 h-4" /> Add Prompt
           </button>
@@ -83,11 +83,11 @@ export function AdminForm() {
             <input 
               value={p}
               onChange={e => handlePromptChange(i, e.target.value)}
-              className="flex-grow bg-black/50 text-white rounded-xl px-4 py-3 border border-transparent focus:border-primary/50 outline-none"
+              className="flex-grow bg-surface-variant/30 text-on-surface rounded-xl px-4 py-3 border border-transparent focus:border-primary/50 outline-none"
               placeholder={`Prompt ${i + 1}`}
             />
             {prompts.length > 1 && (
-              <button type="button" onClick={() => handleRemovePrompt(i)} className="p-3 text-red-400 hover:bg-red-400/10 rounded-xl transition-colors">
+              <button type="button" onClick={() => handleRemovePrompt(i)} className="p-3 text-error hover:bg-error/10 rounded-xl transition-colors">
                 <Trash2 className="w-5 h-5" />
               </button>
             )}
