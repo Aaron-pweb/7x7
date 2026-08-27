@@ -35,7 +35,7 @@ export default async function DashboardPage() {
   });
 
   // Find overall streak (simplified for this demo: max streak of any active challenge)
-  const maxStreak = activeChallenges.reduce((max: number, c: any) => Math.max(max, c.entries.length), 0);
+  const maxStreak = activeChallenges.reduce((max: number, c: typeof activeChallenges[0]) => Math.max(max, c.entries.length), 0);
 
   return (
     <div className="relative min-h-[100dvh] flex flex-col bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container">
@@ -50,11 +50,11 @@ export default async function DashboardPage() {
           
           {activeChallenges.length === 0 ? (
             <div className="p-8 bg-surface-variant/30 rounded-2xl border border-white/5 text-center">
-              <p className="text-on-surface-variant mb-4">You haven't joined any challenges yet.</p>
+              <p className="text-on-surface-variant mb-4">You haven&apos;t joined any challenges yet.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {activeChallenges.map( (challenge: any) => {
+              {activeChallenges.map( (challenge: typeof activeChallenges[0]) => {
                 const completedDays = challenge.entries.length;
                 const progress = (completedDays / challenge.template.duration) * 100;
                 const nextDay = completedDays + 1;
@@ -98,8 +98,8 @@ export default async function DashboardPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {templates.map( (template: any) => {
-              const isActive = activeChallenges.some( (c: any) => c.challengeTemplateId === template.id);
+            {templates.map( (template: typeof templates[0]) => {
+              const isActive = activeChallenges.some( (c: typeof activeChallenges[0]) => c.challengeTemplateId === template.id);
               return (
                 <div key={template.id} className="bg-surface/30 rounded-2xl border border-white/10 p-5 flex flex-col">
                   <h3 className="font-bold text-lg mb-2">{template.title}</h3>

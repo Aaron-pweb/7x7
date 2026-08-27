@@ -53,7 +53,7 @@ export default async function JournalPage(props: Props) {
   }
 
   // If the requested day is already completed, show read-only view
-  const completedEntry = activeChallenge.entries.find((e: any) => e.dayNumber === requestedDay);
+  const completedEntry = activeChallenge.entries.find((e: typeof activeChallenge.entries[0]) => e.dayNumber === requestedDay);
   if (completedEntry) {
     return (
       <div className="relative min-h-[100dvh] flex flex-col bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container">

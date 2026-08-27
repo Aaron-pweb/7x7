@@ -80,8 +80,8 @@ export function AuthForm() {
         router.push("/dashboard");
         router.refresh();
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
       setLoading(false);
     }
   };
@@ -109,8 +109,8 @@ export function AuthForm() {
       if (data?.url) {
         window.location.href = data.url; 
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
       setLoading(false);
     }
   };
@@ -224,7 +224,7 @@ export function AuthForm() {
           </>
         ) : (
           <>
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/login?mode=signup" className="text-primary font-semibold hover:underline underline-offset-4">
               Sign up
             </Link>

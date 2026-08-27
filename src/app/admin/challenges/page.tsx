@@ -49,7 +49,7 @@ export default async function ChallengesPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-surface-variant">
-                  {templates.map( (t: any) => (
+                  {templates.map( (t: typeof templates[0]) => (
                     <tr key={t.id} className="hover:bg-surface-variant/10 transition-colors">
                       <td className="px-6 py-4 font-medium text-on-surface">{t.title}</td>
                       <td className="px-6 py-4 text-on-surface-variant">{t.duration} Days</td>

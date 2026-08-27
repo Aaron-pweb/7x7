@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { User } from "@supabase/supabase-js";
 
 interface SignInModalProps {
   triggerLabel?: string;
@@ -11,7 +12,7 @@ interface SignInModalProps {
 }
 
 export function SignInModal({ triggerLabel, defaultIsSignUp = false, variant = "primary" }: SignInModalProps) {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
