@@ -20,7 +20,7 @@ export default async function DashboardPage() {
   await prisma.user.upsert({
     where: { id: user.id },
     update: { email: user.email! },
-    create: { id: user.id, email: user.email!, role: "ADMIN" } // Defaulting to ADMIN for your testing
+    create: { id: user.id, email: user.email!, role: "USER" } 
   });
 
   // Fetch all available challenge templates

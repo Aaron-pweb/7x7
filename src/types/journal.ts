@@ -68,5 +68,6 @@ export interface ChallengeData {
   status: "ACTIVE" | "COMPLETED" | "ABANDONED";
   currentDay: number; // 1-10
   completedDays: number;
+  template: { duration: number; title: string };
   entries: DailyEntryData[];
 }

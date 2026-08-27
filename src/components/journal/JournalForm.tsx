@@ -3,7 +3,7 @@
 import { useState, useRef, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
-import { saveDailyEntry } from "@/app/actions/journal";
+import { saveDailyEntry } from "@/actions/journal";
 
 interface Props {
   userChallengeId: string;
@@ -46,7 +46,11 @@ export function JournalForm({ userChallengeId, dayNumber, userId, prompts }: Pro
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-      isLastPrompt ? handleSubmit() : handleNext();
+      if (isLastPrompt) {
+        handleSubmit();
+      } else {
+        handleNext();
+      }
     }
   };
 

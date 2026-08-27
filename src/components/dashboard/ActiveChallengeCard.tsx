@@ -13,7 +13,7 @@ export function ActiveChallengeCard({
   challenge,
   onStartChallenge,
 }: ActiveChallengeCardProps) {
-  // Empty state: User hasn't started a 10-day challenge yet
+  // Empty state: User hasn't started a challenge yet
   if (!challenge) {
     return (
       <motion.div
@@ -29,11 +29,11 @@ export function ActiveChallengeCard({
           </div>
 
           <h2 className="text-[26px] md:text-[36px] font-headline-md font-bold text-on-surface leading-tight">
-            Start Your 10-Day Reflection Journey
+            Start Your Reflection Journey
           </h2>
 
           <p className="text-[14px] md:text-[16px] text-on-surface-variant leading-relaxed">
-            Dedicate 5 minutes every day to answer the same 7 essential prompts. Watch your patterns, thoughts, and emotional clarity evolve over 10 days.
+            Dedicate 5 minutes every day to answer the same 7 essential prompts. Watch your patterns, thoughts, and emotional clarity evolve.
           </p>
 
           <div className="pt-2">
@@ -70,12 +70,12 @@ export function ActiveChallengeCard({
             Active Journey
           </span>
           <span className="text-[13px] text-on-surface-variant">
-            Day {currentDay} of 10
+            Day {currentDay} of {challenge.template.duration}
           </span>
         </div>
 
         <div className="text-[12px] md:text-[13px] text-secondary font-medium">
-          {challenge.completedDays} / 10 Completed ({Math.round((challenge.completedDays / 10) * 100)}%)
+          {challenge.completedDays} / {challenge.template.duration} Completed ({Math.round((challenge.completedDays / challenge.template.duration) * 100)}%)
         </div>
       </div>
 
@@ -95,10 +95,10 @@ export function ActiveChallengeCard({
         </p>
       </div>
 
-      {/* 10-Day Visual Step Tracker (Touch-friendly & Responsive) */}
+      {/* Visual Step Tracker (Touch-friendly & Responsive) */}
       <div className="flex flex-col gap-2">
         <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 md:gap-3">
-          {Array.from({ length: 10 }, (_, i) => i + 1).map((day) => {
+          {Array.from({ length: challenge.template.duration }, (_, i) => i + 1).map((day) => {
             const entry = challenge.entries.find((e) => e.dayNumber === day);
             const isCompleted = entry && entry.completedAt !== null;
             const isCurrent = day === currentDay;
@@ -144,12 +144,12 @@ export function ActiveChallengeCard({
           <span>→</span>
         </Link>
 
-        {challenge.completedDays === 10 && (
+        {challenge.completedDays === challenge.template.duration && (
           <Link
             href="/wrap-up"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-primary text-primary hover:bg-primary/5 font-medium text-[15px] transition-colors"
           >
-            <span>View 10-Day Wrap-Up Summary</span>
+            <span>View Wrap-Up Summary</span>
             <span>✨</span>
           </Link>
         )}
