@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Users, LayoutDashboard, PlusCircle, ArrowLeft, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function AdminLayoutClient({ children, userEmail }: { children: React.ReactNode, userEmail: string }) {
+export default function AdminLayoutClient({ children, userEmail, userRole }: { children: React.ReactNode, userEmail: string, userRole: string }) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const renderSidebarContent = () => (
@@ -13,6 +13,7 @@ export default function AdminLayoutClient({ children, userEmail }: { children: R
       <div className="mb-10 flex flex-col gap-2">
         <h1 className="text-2xl font-bold font-headline-md tracking-tight">Admin</h1>
         <p className="text-sm text-on-surface-variant truncate">{userEmail}</p>
+        <span className="self-start px-2 py-1 bg-primary/20 text-primary text-[10px] font-bold rounded-md">{userRole}</span>
       </div>
 
       <nav className="flex flex-col gap-2 flex-grow">
@@ -24,10 +25,12 @@ export default function AdminLayoutClient({ children, userEmail }: { children: R
           <PlusCircle className="w-5 h-5 text-primary" />
           <span className="font-medium text-on-surface">Challenges</span>
         </Link>
-        <Link href="/admin/users" onClick={() => setIsMobileOpen(false)} className="flex items-center gap-3 p-3 rounded-lg hover:bg-surface-variant/50 transition-colors">
-          <Users className="w-5 h-5 text-primary" />
-          <span className="font-medium text-on-surface">Users</span>
-        </Link>
+        {userRole === "SUPERADMIN" && (
+          <Link href="/admin/users" onClick={() => setIsMobileOpen(false)} className="flex items-center gap-3 p-3 rounded-lg hover:bg-surface-variant/50 transition-colors">
+            <Users className="w-5 h-5 text-primary" />
+            <span className="font-medium text-on-surface">Users</span>
+          </Link>
+        )}
       </nav>
 
       <div className="mt-auto pt-6 border-t border-surface-variant">

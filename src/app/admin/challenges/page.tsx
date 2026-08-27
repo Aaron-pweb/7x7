@@ -3,6 +3,7 @@ import { AdminForm } from "@/components/admin/AdminForm";
 import { format } from "date-fns";
 import { deleteChallengeTemplate } from "@/app/actions/journal";
 import { Trash2 } from "lucide-react";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -53,9 +54,11 @@ export default async function ChallengesPage() {
                       <td className="px-6 py-4 font-medium text-on-surface">{t.title}</td>
                       <td className="px-6 py-4 text-on-surface-variant">{t.duration} Days</td>
                       <td className="px-6 py-4 text-on-surface-variant">
-                        <span className="bg-primary/10 text-primary px-2 py-1 rounded-md font-bold text-xs">
-                          {t._count.userChallenges} Users
-                        </span>
+                        <Link href={`/admin/challenges/${t.id}`} className="inline-block hover:opacity-80 transition-opacity">
+                          <span className="bg-primary/10 text-primary px-2 py-1 rounded-md font-bold text-xs">
+                            {t._count.userChallenges} Users
+                          </span>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 text-on-surface-variant">{format(new Date(t.createdAt), "MMM d, yyyy")}</td>
                       <td className="px-6 py-4 text-right">

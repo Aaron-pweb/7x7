@@ -2,10 +2,19 @@ import prisma from "@/utils/prisma";
 import { format } from "date-fns";
 import { deleteUser, toggleAdminRole } from "@/app/actions/journal";
 import { Trash2, Shield, ShieldOff } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function UsersPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/");
+
+  const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+  if (dbUser?.role !== "SUPERADMIN") redirect("/admin");
+
   const users = await prisma.user.findMany({
     orderBy: { createdAt: "desc" },
     include: {

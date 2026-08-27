@@ -5,6 +5,13 @@ import { revalidatePath } from "next/cache";
 
 // Admin Actions
 export async function createChallengeTemplate(data: { title: string; description: string; duration: number; prompts: string[] }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Unauthorized");
+  
+  const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+  if (dbUser?.role !== "ADMIN" && dbUser?.role !== "SUPERADMIN") throw new Error("Forbidden");
+
   await prisma.challengeTemplate.create({
     data: {
       title: data.title,
@@ -67,7 +74,16 @@ export async function saveDailyEntry(data: {
   return { success: true };
 }
 
+import { createClient } from "@/utils/supabase/server";
+
 export async function deleteChallengeTemplate(id: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Unauthorized");
+  
+  const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+  if (dbUser?.role !== "ADMIN" && dbUser?.role !== "SUPERADMIN") throw new Error("Forbidden");
+
   await prisma.challengeTemplate.delete({ where: { id } });
   revalidatePath("/admin/challenges");
   revalidatePath("/dashboard");
@@ -75,11 +91,25 @@ export async function deleteChallengeTemplate(id: string) {
 }
 
 export async function deleteUser(id: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Unauthorized");
+  
+  const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+  if (dbUser?.role !== "SUPERADMIN") throw new Error("Forbidden");
+
   await prisma.user.delete({ where: { id } });
   revalidatePath("/admin/users");
 }
 
 export async function toggleAdminRole(id: string, currentRole: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Unauthorized");
+  
+  const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+  if (dbUser?.role !== "SUPERADMIN") throw new Error("Forbidden");
+
   await prisma.user.update({
     where: { id },
     data: { role: currentRole === "ADMIN" ? "USER" : "ADMIN" }

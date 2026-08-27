@@ -10,9 +10,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!user) redirect("/");
 
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
-  if (dbUser?.role !== "ADMIN") {
+  if (dbUser?.role !== "ADMIN" && dbUser?.role !== "SUPERADMIN") {
     redirect("/dashboard");
   }
 
-  return <AdminLayoutClient userEmail={user.email || ""}>{children}</AdminLayoutClient>;
+  return <AdminLayoutClient userEmail={user.email || ""} userRole={dbUser.role}>{children}</AdminLayoutClient>;
 }
