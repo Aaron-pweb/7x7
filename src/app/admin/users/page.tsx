@@ -1,6 +1,6 @@
 import prisma from "@/utils/prisma";
 import { format } from "date-fns";
-import { deleteUser, toggleAdminRole } from "@/app/actions/journal";
+import { deleteUser, toggleAdminRole } from "@/actions/journal";
 import { Trash2, Shield, ShieldOff } from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
