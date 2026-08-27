@@ -16,12 +16,6 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
-  // SYNC USER: Ensure the user exists in our database so foreign keys don't break
-  await prisma.user.upsert({
-    where: { id: user.id },
-    update: { email: user.email! },
-    create: { id: user.id, email: user.email!, role: "USER" } 
-  });
 
   // Fetch all available challenge templates
   const templates = await prisma.challengeTemplate.findMany({
@@ -34,13 +28,43 @@ export default async function DashboardPage() {
     include: { template: true, entries: true }
   });
 
-  // Find overall streak (simplified for this demo: max streak of any active challenge)
-  const maxStreak = activeChallenges.reduce((max: number, c: typeof activeChallenges[0]) => Math.max(max, c.entries.length), 0);
+  // Fetch user's completed entries for streak calculation
+  const completedEntries = await prisma.dailyEntry.findMany({
+    where: { userId: user.id, completedAt: { not: null } },
+    orderBy: { completedAt: 'desc' },
+    select: { completedAt: true }
+  });
+
+  let realStreak = 0;
+  if (completedEntries.length > 0) {
+    const dates = [...new Set(completedEntries.map(e => e.completedAt!.toISOString().split('T')[0]))];
+    const today = new Date().toISOString().split('T')[0];
+    const yesterdayDate = new Date();
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    const yesterday = yesterdayDate.toISOString().split('T')[0];
+
+    if (dates[0] === today || dates[0] === yesterday) {
+      realStreak = 1;
+      let currentDate = new Date(dates[0]);
+      
+      for (let i = 1; i < dates.length; i++) {
+        const prevDate = new Date(currentDate);
+        prevDate.setDate(prevDate.getDate() - 1);
+        
+        if (dates[i] === prevDate.toISOString().split('T')[0]) {
+          realStreak++;
+          currentDate = prevDate;
+        } else {
+          break;
+        }
+      }
+    }
+  }
 
   return (
     <div className="relative min-h-[100dvh] flex flex-col bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container">
       <ShaderBackground />
-      <DashboardHeader streak={maxStreak} />
+      <DashboardHeader streak={realStreak} />
       
       <main className="flex-grow flex flex-col items-center relative z-10 px-4 md:px-8 pt-[calc(env(safe-area-inset-top)+100px)] md:pt-[130px] pb-[calc(env(safe-area-inset-bottom)+20px)] pb-16 w-full max-w-5xl mx-auto gap-10 md:gap-14">
         
@@ -49,8 +73,16 @@ export default async function DashboardPage() {
           <h2 className="text-2xl font-headline-md font-bold text-on-surface mb-6">Your Active Journeys</h2>
           
           {activeChallenges.length === 0 ? (
-            <div className="p-8 bg-surface-variant/30 rounded-2xl border border-white/5 text-center">
-              <p className="text-on-surface-variant mb-4">You haven&apos;t joined any challenges yet.</p>
+            <div className="py-12 px-6 bg-surface-variant/20 rounded-3xl border border-white/5 text-center flex flex-col items-center justify-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <svg className="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-on-surface mb-2">No Active Journeys</h3>
+              <p className="text-on-surface-variant max-w-md mx-auto">
+                You haven&apos;t started any journaling challenges yet. Browse the discover section below to begin your first journey!
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -97,24 +129,38 @@ export default async function DashboardPage() {
             <Link href="/admin" className="text-sm text-primary hover:underline">Go to Admin Panel</Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {templates.map( (template: typeof templates[0]) => {
-              const isActive = activeChallenges.some( (c: typeof activeChallenges[0]) => c.challengeTemplateId === template.id);
-              return (
-                <div key={template.id} className="bg-surface/30 rounded-2xl border border-white/10 p-5 flex flex-col">
-                  <h3 className="font-bold text-lg mb-2">{template.title}</h3>
-                  <p className="text-sm text-on-surface-variant mb-4 line-clamp-2 flex-grow">{template.description}</p>
-                  <p className="text-xs font-bold text-primary mb-4">{template.duration} Days • {Array.isArray(template.prompts) ? template.prompts.length : 0} Prompts/Day</p>
-                  
-                  {isActive ? (
-                    <div className="py-2 text-center text-sm font-bold text-secondary bg-secondary/10 rounded-lg">Already Joined</div>
-                  ) : (
-                    <JoinChallengeButton templateId={template.id} userId={user.id} />
-                  )}
-                </div>
-              );
-            })}
-          </div>
+          {templates.length === 0 ? (
+            <div className="py-12 px-6 bg-surface-variant/20 rounded-3xl border border-white/5 text-center flex flex-col items-center justify-center">
+              <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
+                <svg className="w-8 h-8 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-on-surface mb-2">Check Back Later</h3>
+              <p className="text-on-surface-variant max-w-md mx-auto">
+                No new challenges are currently available. Check back soon for more journaling templates!
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {templates.map( (template: typeof templates[0]) => {
+                const isActive = activeChallenges.some( (c: typeof activeChallenges[0]) => c.challengeTemplateId === template.id);
+                return (
+                  <div key={template.id} className="bg-surface/30 rounded-2xl border border-white/10 p-5 flex flex-col">
+                    <h3 className="font-bold text-lg mb-2">{template.title}</h3>
+                    <p className="text-sm text-on-surface-variant mb-4 line-clamp-2 flex-grow">{template.description}</p>
+                    <p className="text-xs font-bold text-primary mb-4">{template.duration} Days • {Array.isArray(template.prompts) ? template.prompts.length : 0} Prompts/Day</p>
+                    
+                    {isActive ? (
+                      <div className="py-2 text-center text-sm font-bold text-secondary bg-secondary/10 rounded-lg">Already Joined</div>
+                    ) : (
+                      <JoinChallengeButton templateId={template.id} userId={user.id} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </section>
 
       </main>
