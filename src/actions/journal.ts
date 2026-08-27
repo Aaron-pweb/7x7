@@ -59,6 +59,15 @@ export async function saveDailyEntry(data: {
   dayNumber: number;
   answers: { promptText: string; answerText: string }[];
 }) {
+  const challenge = await prisma.userChallenge.findUnique({
+    where: { id: data.userChallengeId },
+    include: { template: true, entries: true }
+  });
+
+  if (!challenge) throw new Error("Challenge not found");
+
+  const isLastDay = (challenge.entries.length + 1) >= challenge.template.duration;
+
   await prisma.dailyEntry.create({
     data: {
       userChallengeId: data.userChallengeId,
@@ -70,8 +79,17 @@ export async function saveDailyEntry(data: {
       }
     }
   });
+
+  if (isLastDay) {
+    await prisma.userChallenge.update({
+      where: { id: data.userChallengeId },
+      data: { status: "COMPLETED", endDate: new Date() }
+    });
+  }
+
   revalidatePath("/dashboard");
-  return { success: true };
+  revalidatePath("/wrap-up");
+  return { success: true, isCompleted: isLastDay };
 }
 
 import { createClient } from "@/utils/supabase/server";
