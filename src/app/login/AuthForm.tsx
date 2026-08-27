@@ -14,7 +14,7 @@ export function AuthForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(searchParams.get("error") === "auth-failed" ? "Authentication failed. Please try again." : null);
 
   const router = useRouter();
   const supabase = createClient();
