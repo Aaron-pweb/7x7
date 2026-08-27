@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { joinChallenge } from "@/app/actions/journal";
+import { joinChallenge } from "@/actions/journal";
 
 export function JoinChallengeButton({ templateId, userId }: { templateId: string; userId: string }) {
   const [isPending, startTransition] = useTransition();

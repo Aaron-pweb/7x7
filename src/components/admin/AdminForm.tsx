@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { createChallengeTemplate } from "@/app/actions/journal";
+import { createChallengeTemplate } from "@/actions/journal";
 import { Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 

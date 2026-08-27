@@ -3,7 +3,8 @@
 import { useState, useRef, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
-import { saveDailyEntry } from "@/app/actions/journal";
+import { saveDailyEntry } from "@/actions/journal";
+import { useRouter } from "next/navigation";
 
 interface Props {
   userChallengeId: string;
@@ -17,6 +18,7 @@ export function JournalForm({ userChallengeId, dayNumber, userId, prompts }: Pro
   const [answers, setAnswers] = useState<string[]>(Array(prompts.length).fill(""));
   const [isPending, startTransition] = useTransition();
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const router = useRouter();
 
   const isLastPrompt = currentIndex === prompts.length - 1;
 
@@ -40,13 +42,22 @@ export function JournalForm({ userChallengeId, dayNumber, userId, prompts }: Pro
         promptText,
         answerText: answers[idx]
       }));
-      await saveDailyEntry({ userId, userChallengeId, dayNumber, answers: formattedAnswers });
+      const res = await saveDailyEntry({ userId, userChallengeId, dayNumber, answers: formattedAnswers });
+      if (res?.isCompleted) {
+        router.push("/wrap-up");
+      } else {
+        router.push("/dashboard");
+      }
     });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-      isLastPrompt ? handleSubmit() : handleNext();
+      if (isLastPrompt) {
+        handleSubmit();
+      } else {
+        handleNext();
+      }
     }
   };
 

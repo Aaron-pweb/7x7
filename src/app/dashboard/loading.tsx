@@ -9,13 +9,28 @@ export default function DashboardLoading() {
       </header>
 
       <main className="flex-grow flex flex-col items-center relative z-10 px-4 md:px-8 pt-[100px] md:pt-[130px] pb-16 w-full max-w-5xl mx-auto gap-10 md:gap-14">
-        <section className="w-full flex flex-col gap-4 text-left">
-          <div className="w-32 h-4 bg-primary/20 rounded animate-pulse" />
-          <div className="w-64 h-10 bg-on-surface/10 rounded-lg animate-pulse" />
-          <div className="w-full max-w-xl h-6 bg-on-surface-variant/10 rounded animate-pulse" />
+        
+        {/* Active Challenges Skeleton */}
+        <section className="w-full">
+          <div className="h-8 w-48 bg-surface-variant/50 animate-pulse rounded-md mb-6"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-surface/30 rounded-3xl border border-white/5 p-6 h-[220px] animate-pulse"></div>
+            <div className="bg-surface/30 rounded-3xl border border-white/5 p-6 h-[220px] animate-pulse hidden md:block"></div>
+          </div>
         </section>
 
-        <div className="w-full h-[400px] rounded-2xl md:rounded-3xl bg-surface/40 backdrop-blur-xl border border-primary/10 animate-pulse" />
+        {/* Discover Challenges Skeleton */}
+        <section className="w-full">
+          <div className="flex items-center justify-between mb-6">
+            <div className="h-8 w-56 bg-surface-variant/50 animate-pulse rounded-md"></div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-surface/30 rounded-2xl border border-white/5 p-5 h-[180px] animate-pulse"></div>
+            ))}
+          </div>
+        </section>
+
       </main>
     </div>
   );

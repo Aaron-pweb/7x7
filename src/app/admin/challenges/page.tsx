@@ -1,7 +1,7 @@
 import prisma from "@/utils/prisma";
 import { AdminForm } from "@/components/admin/AdminForm";
 import { format } from "date-fns";
-import { deleteChallengeTemplate } from "@/app/actions/journal";
+import { deleteChallengeTemplate } from "@/actions/journal";
 import { Trash2 } from "lucide-react";
 import Link from "next/link";
 
