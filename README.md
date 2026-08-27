@@ -1,5 +1,11 @@
 # 7x7 Journal
 
+<p align="center">
+  <img src="public/pc-view.png" alt="Desktop View" height="300" />
+  <img src="public/mobile-view.jpg" alt="Mobile View" height="300" />
+
+</p>
+
 A web application designed for mindful journaling, asking 7 different questions about your daily activity. Built as a Progressive Web App (PWA) with offline capabilities.
 
 ## Features
